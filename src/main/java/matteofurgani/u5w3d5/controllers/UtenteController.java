@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -22,18 +23,6 @@ public class UtenteController {
     @Autowired
     private UtenteService utenteService;
 
-    /*// POST http://localhost:3001/utenti (+ req.body)
-
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public NewUtenteRespDTO saveUtente(@RequestBody @Validated NewUtenteDTO body, BindingResult validation) throws Exception{
-        if (validation.hasErrors()){
-            throw new BadRequestException(validation.getAllErrors());
-        }
-
-        Utente utente = utenteService.save(body);
-        return new NewUtenteRespDTO(utente.getId());
-    }*/
 
     // GET http://localhost:3001/utenti
     @GetMapping
@@ -44,9 +33,21 @@ public class UtenteController {
         return utenteService.getUtente(page, size, sort);
     }
 
+    @GetMapping("/me")
+    public Utente getProfile(@AuthenticationPrincipal Utente currentAuthenticatedUtente) {
+        return currentAuthenticatedUtente;
+    }
+
+    @DeleteMapping("/me")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteProfile(@AuthenticationPrincipal Utente currentAuthenticatedUtente){
+        this.utenteService.findByIDAndDelete(currentAuthenticatedUtente.getId());
+    }
+
     // GET http://localhost:3001/utenti/{id}
 
     @GetMapping("/{utentiId}")
+    @PreAuthorize("hasAuthority('ORGANIZZATORE')")
     public Utente findById(@PathVariable int utentiId) {
 
         return utenteService.findById(utentiId);

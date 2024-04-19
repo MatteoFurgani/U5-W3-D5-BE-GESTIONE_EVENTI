@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class EventoService {
@@ -73,7 +74,12 @@ public class EventoService {
         if (Objects.isNull(evento)) {
             throw new NotFoundException(eventoId);
         }
-        if (evento.getUtenti().contains(utente)) {
+        for (Evento e : utente.getEventi()) {
+            if (e.getData().isEqual(evento.getData())) {
+                throw new BadRequestException("L'utente è già associato a un evento nella stessa data");
+            }
+        }
+        if (evento.getUtenti().stream().anyMatch(u -> u.getId() == utenteId)) {
             throw new BadRequestException("Utente già presente nel evento");
         }
         evento.getUtenti().add(utente);
@@ -85,4 +91,6 @@ public class EventoService {
 
 
 
+
 }
+
