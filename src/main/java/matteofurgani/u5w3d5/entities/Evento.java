@@ -1,9 +1,11 @@
 package matteofurgani.u5w3d5.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 
 @Entity
@@ -12,7 +14,6 @@ import java.util.List;
 @Setter
 @ToString
 @NoArgsConstructor
-@AllArgsConstructor
 public class Evento {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,5 +24,16 @@ public class Evento {
     private String luogo;
     private int maxPosti;
     @ManyToMany(mappedBy = "eventi")
+
     private List<Utente> utenti;
+
+    public Evento(String titolo, String descrizione, LocalDate data, String luogo, int maxPosti) {
+        this.titolo = titolo;
+        this.descrizione = descrizione;
+        this.data = data;
+        this.luogo = luogo;
+        this.maxPosti = maxPosti;
+    }
+
+
 }

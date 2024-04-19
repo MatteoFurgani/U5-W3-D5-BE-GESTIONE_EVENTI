@@ -23,9 +23,9 @@ public class ExceptionsHandler {
         return new ErrorsRespDTO(ex.getMessage(), new Date(), errors);
     }
 
-    @ExceptionHandler(ChangeSetPersister.NotFoundException.class)
+    @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorsRespDTO handleNotFoundException(ChangeSetPersister.NotFoundException ex) {
+    public ErrorsRespDTO handleNotFoundException(NotFoundException ex) {
         return new ErrorsRespDTO(ex.getMessage(), new Date(), null);
     }
 

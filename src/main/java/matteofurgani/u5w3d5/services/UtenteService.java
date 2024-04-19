@@ -10,7 +10,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 
@@ -19,13 +21,16 @@ public class UtenteService {
     @Autowired
     private UtenteDAO utenteDAO;
 
+    @Autowired
+    private PasswordEncoder bcrypt;
+
     public Utente save(NewUtenteDTO body) throws IOException{
         utenteDAO.findByEmail(body.email()).ifPresent(
                 utente -> {
                     throw new BadRequestException("L'email " + body.email() + " è già in uso!");
                 }
         );
-        Utente utente = new Utente(body.nome(), body.cognome(), body.email(), body.password());
+        Utente utente = new Utente(body.nome(), body.cognome(), body.email(), bcrypt.encode(body.password()));
 
         return utenteDAO.save(utente);
     }
